@@ -48,6 +48,7 @@ app.get('/api/chats', (req, res) => {
           username: 'durov',
           image: 'https://static.dw.com/image/43377200_303.jpg',
         },
+        isAuthor: false,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       },
@@ -68,6 +69,7 @@ app.get('/api/chats', (req, res) => {
           image:
             'https://scontent.fsof8-1.fna.fbcdn.net/v/t31.18172-8/11703541_1628435674062994_7860637593528075915_o.jpg?_nc_cat=107&ccb=1-6&_nc_sid=09cbfe&_nc_ohc=9TzZgR3i7h8AX-4tMc1&_nc_ht=scontent.fsof8-1.fna&oh=00_AT-x9KcHqqGbl_6EQeinws4HZwhCNdzyUbHQh9A9PlQQNw&oe=629E3570',
         },
+        isAuthor: false,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       },
@@ -90,19 +92,42 @@ app.get('/api/chats/:chatId/messages', (req, res) => {
     messages.push({
       id: 'message_id_' + i,
       chatId: req.params.chatId,
-      text: 'Message ' + i,
+      text: 'Message hello' + i,
       author: {
         id: 'user_id_1',
         fullname: 'Max Dmitriev',
         username: 'itmax',
         image: 'https://static.dw.com/image/43377200_303.jpg',
       },
+      isAuthor: Math.random() >= 0.7,
       createdAt: Date.now() - i,
       updatedAt: Date.now() - i,
     });
   }
 
   return res.json({ type: 'MessagesList', data: messages });
+});
+
+app.post('/api/chats/:chatId/messages', (req, res) => {
+  console.log('/api/chats/:chatId/messages', req.params, req.body, req.headers.authorization);
+
+  return res.status(201).json({
+    type: 'MessageSent',
+    data: {
+      id: 'message_id_new',
+      chatId: req.params.chatId,
+      text: req.body.message,
+      author: {
+        id: 'user_id_1',
+        fullname: 'Max Dmitriev',
+        username: 'itmax',
+        image: 'https://static.dw.com/image/43377200_303.jpg',
+      },
+      isAuthor: true,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    },
+  });
 });
 
 app.listen(port, () => {
