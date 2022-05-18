@@ -122,6 +122,14 @@ app.post('/api/chats/:chatId/messages', (req, res) => {
   });
 });
 
+app.get('/api/chats/:chatId', (req, res) => {
+  console.log('/api/chats/:chatId');
+
+  const chat = chats.find((chat) => (chat.id === req.params.chatId));
+
+  return res.json({ type: 'Chat', data: chat });
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
