@@ -1,6 +1,11 @@
 const express = require('express');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+
 const app = express();
-const port = 3000;
+
+const API_PORT = process.env.API_PORT || 3000;
+const WS_PORT = process.env.WS_PORT || 3030;
 
 app.use(express.json());
 
@@ -125,11 +130,68 @@ app.post('/api/chats/:chatId/messages', (req, res) => {
 app.get('/api/chats/:chatId', (req, res) => {
   console.log('/api/chats/:chatId');
 
-  const chat = chats.find((chat) => (chat.id === req.params.chatId));
+  const chat = chats.find((chat) => chat.id === req.params.chatId);
 
   return res.json({ type: 'Chat', data: chat });
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.listen(API_PORT, () => {
+  console.log(`Example app listening on port ${API_PORT}`);
 });
+
+const httpServer = createServer();
+const io = new Server(httpServer, {});
+
+io.on('connection', (socket) => {
+  console.log('connected');
+
+  socket.on('message:send', async (message) => {
+    console.log('message:send', { message });
+
+    io
+      // .to(message.data.chatId)
+      .emit('message', message.data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('disconnect');
+  });
+
+  setInterval(() => {
+    socket.emit(
+      'message',
+      JSON.stringify({
+        id: 'message_id',
+        chatId: 'chat_id',
+        text: 'Message hello',
+        author: users[Math.floor((Math.random() * 3) % 3)],
+        isAuthor: Math.random() >= 0.7,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      })
+    );
+  }, 3000);
+
+  setInterval(() => {
+    socket.emit(
+      'chat_invitation',
+      JSON.stringify({
+        id: 'chat_id',
+        name: 'Chat you are invited to',
+        image:
+          'https://scontent.fsof8-1.fna.fbcdn.net/v/t31.18172-8/11703541_1628435674062994_7860637593528075915_o.jpg?_nc_cat=107&ccb=1-6&_nc_sid=09cbfe&_nc_ohc=9TzZgR3i7h8AX-4tMc1&_nc_ht=scontent.fsof8-1.fna&oh=00_AT-x9KcHqqGbl_6EQeinws4HZwhCNdzyUbHQh9A9PlQQNw&oe=629E3570',
+        lastMessage: {
+          id: 'message_id_1',
+          chatId: 'chat_2',
+          text: 'Webinar today at 5 PM',
+          author: users[2],
+          isAuthor: false,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        },
+      })
+    );
+  }, 8000);
+});
+
+httpServer.listen(WS_PORT);
