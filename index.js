@@ -35,6 +35,32 @@ const users = [
       'https://scontent.fsof8-1.fna.fbcdn.net/v/t31.18172-8/11703541_1628435674062994_7860637593528075915_o.jpg?_nc_cat=107&ccb=1-6&_nc_sid=09cbfe&_nc_ohc=9TzZgR3i7h8AX-4tMc1&_nc_ht=scontent.fsof8-1.fna&oh=00_AT-x9KcHqqGbl_6EQeinws4HZwhCNdzyUbHQh9A9PlQQNw&oe=629E3570',
     token: 'Bearer access_token_from_api_2',
   },
+  {
+    id: 'user_id_4',
+    fullname: 'Ilia Mihov',
+    username: 'mehoff',
+    password: 'qwerty',
+    image:
+      'https://instagram.fsof8-1.fna.fbcdn.net/v/t51.2885-19/174310987_482266056252090_3814039073670522870_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fsof8-1.fna.fbcdn.net&_nc_cat=106&_nc_ohc=FvL7ct83Q5AAX9excEM&tn=uqb21fL9EgnWvYNW&edm=ABfd0MgBAAAA&ccb=7-5&oh=00_AT9qRNnadI10A7W7alvL3rlxseIcHpc-jr6gz6B8OMdHSw&oe=629833D0&_nc_sid=7bff83',
+    token: 'Bearer access_token_from_api_3',
+  },
+  {
+    id: 'user_id_5',
+    fullname: 'Тимофей Лавренюк',
+    username: 'timofei',
+    password: 'qwerty',
+    image: 'https://fsx1.itstep.org/api/v1/files/MikhPvPLV4zhNu0_yXIW7YFpfec4Rmlf?inline=true',
+    token: 'Bearer access_token_from_api_4',
+  },
+  {
+    id: 'user_id_6',
+    fullname: 'Matvey Gorelik',
+    username: 'offiza',
+    password: 'qwerty',
+    image:
+      'https://instagram.fsof8-1.fna.fbcdn.net/v/t51.2885-19/83664308_158259268932203_4913942529407188992_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fsof8-1.fna.fbcdn.net&_nc_cat=111&_nc_ohc=xLr_YJO7GsYAX91q-fY&edm=ABfd0MgBAAAA&ccb=7-5&oh=00_AT-n7o2uhGknD3-QI9udimepQPGMt5us-AgWpxM5P5MMtA&oe=62989B61&_nc_sid=7bff83',
+    token: 'Bearer access_token_from_api_5',
+  },
 ];
 
 const chats = [
@@ -50,6 +76,20 @@ const chats = [
         createdAt: Date.now(),
         updatedAt: Date.now(),
       },
+      {
+        id: 'message_id_2',
+        text: 'Can you teach me how you made it?',
+        authorId: users[1].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'message_id_3',
+        text: 'Have you seen this?',
+        authorId: users[1].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
     ],
   },
   {
@@ -60,8 +100,59 @@ const chats = [
     messages: [
       {
         id: 'message_id_1',
-        text: 'Webinar today at 5 PM',
+        text:
+          'Доброго дня всім. \n' +
+          ' \n' +
+          'Продовжуємо серію мотивуючих зустрічей для студентів IT STEP Академії. \n' +
+          ' \n' +
+          'Наступнім нашим гостем буде Олександр Пучка - технічний директор у дуже цікавому стартапі Zibra AI. Олександр та його команда займається 3Д моделюванням із використанням штучного інтелекту та machine learning, але це далеко не все). \n' +
+          ' \n' +
+          'Вебінар буде цікавим, як для дизайнерів, так і для програмістів. \n' +
+          ' \n' +
+          'Тож чекаємо вас 19 травня о 17:00 за посиланням. \n',
         authorId: users[2].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'message_id_2',
+        text:
+          'Встречайте победителей конкурса для дизайнеров, которым мы хотим выразить поддержку защитникам Мариуполя!\n' +
+          '\n' +
+          '1 место - Исакович Дарья, студентка ОТУШ\n' +
+          '2 место - Вернигора Мария - ПКО\n' +
+          '3 место - Пасека Яна - ПКО\n',
+        authorId: users[2].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ],
+  },
+  {
+    id: 'chat_3',
+    name: 'Ilia Mihov',
+    image:
+      'https://instagram.fsof8-1.fna.fbcdn.net/v/t51.2885-19/174310987_482266056252090_3814039073670522870_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fsof8-1.fna.fbcdn.net&_nc_cat=106&_nc_ohc=FvL7ct83Q5AAX9excEM&tn=uqb21fL9EgnWvYNW&edm=ABfd0MgBAAAA&ccb=7-5&oh=00_AT9qRNnadI10A7W7alvL3rlxseIcHpc-jr6gz6B8OMdHSw&oe=629833D0&_nc_sid=7bff83',
+    messages: [
+      {
+        id: 'message_id_1',
+        text: 'Как твои дела?',
+        authorId: users[3].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ],
+  },
+  {
+    id: 'chat_4',
+    name: 'Matvey Gorelik',
+    image:
+      'https://instagram.fsof8-1.fna.fbcdn.net/v/t51.2885-19/83664308_158259268932203_4913942529407188992_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fsof8-1.fna.fbcdn.net&_nc_cat=111&_nc_ohc=xLr_YJO7GsYAX91q-fY&edm=ABfd0MgBAAAA&ccb=7-5&oh=00_AT-n7o2uhGknD3-QI9udimepQPGMt5us-AgWpxM5P5MMtA&oe=62989B61&_nc_sid=7bff83',
+    messages: [
+      {
+        id: 'message_id_1',
+        text: 'Привет',
+        authorId: users[5].id,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       },
@@ -98,7 +189,7 @@ app.post('/api/auth/sign-in', (req, res) => {
 function serializeChat(chat) {
   const { id, name, image, messages } = chat;
 
-  return {
+  const serializedChat = {
     id,
     name,
     image,
@@ -106,6 +197,11 @@ function serializeChat(chat) {
       messages.length && messages[messages.length - 1]
         ? serializeMessage(id, undefined, messages[messages.length - 1])
         : null,
+  };
+
+  return {
+    ...serializedChat,
+    lastMessage: { ...serializedChat.lastMessage, text: serializedChat.lastMessage.text.substring(0, 30) },
   };
 }
 
@@ -226,8 +322,8 @@ io.on('connection', (socket) => {
     // - check if chat exists
     // - broadcast message to chat subscribers
 
-    const chat = chats.find(chat => chat.id === chatId);
-    const newMessage = chat.messages.find(message => message.id === id);
+    const chat = chats.find((chat) => chat.id === chatId);
+    const newMessage = chat.messages.find((message) => message.id === id);
 
     io
       // .to(message.data.chatId)
