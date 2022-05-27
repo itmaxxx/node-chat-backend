@@ -13,7 +13,8 @@ const users = [
   {
     id: 'user_id_1',
     fullname: 'Max Dmitriev',
-    username: 'itmax',
+    username: 'dmitriev',
+    password: 'qwerty',
     image: 'https://avatars.githubusercontent.com/u/38819868?v=4',
     token: 'Bearer access_token_from_api',
   },
@@ -21,6 +22,7 @@ const users = [
     id: 'user_id_2',
     fullname: 'Pavel Durov',
     username: 'durov',
+    password: 'qwerty',
     image: 'https://static.dw.com/image/43377200_303.jpg',
     token: 'Bearer access_token_from_api_1',
   },
@@ -28,6 +30,7 @@ const users = [
     id: 'user_id_3',
     fullname: 'ITStep',
     username: 'itstep',
+    password: 'qwerty',
     image:
       'https://scontent.fsof8-1.fna.fbcdn.net/v/t31.18172-8/11703541_1628435674062994_7860637593528075915_o.jpg?_nc_cat=107&ccb=1-6&_nc_sid=09cbfe&_nc_ohc=9TzZgR3i7h8AX-4tMc1&_nc_ht=scontent.fsof8-1.fna&oh=00_AT-x9KcHqqGbl_6EQeinws4HZwhCNdzyUbHQh9A9PlQQNw&oe=629E3570',
     token: 'Bearer access_token_from_api_2',
@@ -71,11 +74,15 @@ app.post('/api/auth/sign-in', (req, res) => {
 
   const { username, password } = req.body;
 
-  if (username === 'user@gmail.com') {
-    if (password === 'qwerty') {
+  const user = users.find((user) => user.username === username);
+
+  console.log(user, username, password);
+
+  if (user) {
+    if (user.password === password) {
       return res.json({
         token: 'access_token_from_api',
-        data: users[0],
+        data: user,
       });
     } else {
       return res.json({
@@ -129,8 +136,8 @@ app.get('/api/chats/:chatId/messages', (req, res) => {
 
   const user = requireUserAuthorization(req);
 
-  const messages = chats.find((chat) => chat.id === req.params.chatId).messages;
-  const messagesList = messages.map((message) => serializeMessage(req.params.chatId, user.id, message));
+  const chat = chats.find((chat) => chat.id === req.params.chatId);
+  const messagesList = chat.messages.map((message) => serializeMessage(req.params.chatId, user.id, message));
 
   // const messages = [];
   //
@@ -155,27 +162,36 @@ function requireUserAuthorization(req) {
   return user;
 }
 
-app.post('/api/chats/:chatId/messages', (req, res) => {
-  console.log('/api/chats/:chatId/messages', req.params, req.body);
-
-  const user = requireUserAuthorization(req);
-
-  const chat = chats.find((chat) => chat.id === req.params.chatId);
+function createNewChatMessage(chatId, userId, text) {
+  const chat = chats.find((chat) => chat.id === chatId);
   const messageId = chat.messages.length + 1;
 
   const newMessage = {
     id: 'message_id_' + messageId,
-    text: req.body.message,
-    authorId: user.id,
+    text,
+    authorId: userId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
 
   chat.messages.push(newMessage);
 
+  return serializeMessage(chatId, userId, newMessage);
+}
+
+app.post('/api/chats/:chatId/messages', (req, res) => {
+  console.log('/api/chats/:chatId/messages', req.params, req.body);
+
+  const user = requireUserAuthorization(req);
+
+  const { chatId } = req.params;
+  const { message } = req.body;
+
+  const newMessage = createNewChatMessage(chatId, user.id, message);
+
   return res.status(201).json({
     type: 'MessageSent',
-    data: serializeMessage(chat.id, user.id, newMessage),
+    data: newMessage,
   });
 });
 
@@ -202,15 +218,20 @@ io.on('connection', (socket) => {
   socket.on('message:send', async (message) => {
     console.log('message:send', { message });
 
+    const { chatId, id } = message.data;
+
     // TODO:
     // - get user by token
     // - add message to database
     // - check if chat exists
     // - broadcast message to chat subscribers
 
+    const chat = chats.find(chat => chat.id === chatId);
+    const newMessage = chat.messages.find(message => message.id === id);
+
     io
       // .to(message.data.chatId)
-      .emit('message', message.data);
+      .emit('message', serializeMessage(chat.id, newMessage.authorId, newMessage));
   });
 
   socket.on('disconnect', () => {
@@ -230,39 +251,36 @@ io.on('connection', (socket) => {
     // - get created chat
     // - send chat_invitation to chat owner with created chat
 
-    socket.emit(
-      'chat_invitation',
-      JSON.stringify({
-        id: 'chat_id',
-        name,
-        image: null,
-        lastMessage: {
-          id: 'message_id_1',
-          chatId: 'chat_2',
-          text: 'Chat created',
-          author: users[0],
-          isAuthor: false,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        },
-      })
-    );
+    const user = requireUserAuthorization({ headers: { authorization: 'Bearer ' + token } });
+
+    console.log(user);
+
+    const chatId = 'chat_id_' + (chats.length + 1);
+
+    const newChat = {
+      id: chatId,
+      name,
+      image: null,
+      messages: [],
+    };
+
+    chats.push(newChat);
+
+    createNewChatMessage(chatId, user.id, 'Chat created');
+
+    const createdChat = chats.find((chat) => chat.id === chatId);
+
+    socket.emit('chat_invitation', JSON.stringify(serializeChat(createdChat)));
   });
 
   setInterval(() => {
-    socket.emit(
-      'message',
-      JSON.stringify({
-        id: 'message_id',
-        chatId: Math.random() >= 0.5 ? 'chat_1' : 'chat_2',
-        text: "Message hello how are you? I'm fine, thanks",
-        author: users[Math.floor((Math.random() * 3) % 3)],
-        isAuthor: Math.random() >= 0.7,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      })
-    );
-  }, 30000);
+    const chat = chats[Math.floor((Math.random() * chats.length) % chats.length)];
+    const user = users[Math.floor((Math.random() * users.length) % users.length)];
+
+    const newMessage = createNewChatMessage(chat.id, user.id, "Message hello how are you? I'm fine, thanks");
+
+    socket.emit('message', JSON.stringify({ ...newMessage, isAuthor: false }));
+  }, 10000);
 
   // setInterval(() => {
   //   socket.emit(
