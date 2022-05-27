@@ -141,6 +141,27 @@ const chats = [
         createdAt: Date.now(),
         updatedAt: Date.now(),
       },
+      {
+        id: 'message_id_2',
+        text: 'Привет, все хорошо?',
+        authorId: users[0].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'message_id_3',
+        text: 'Завтра на велосипедах, всё в силе?',
+        authorId: users[0].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'message_id_4',
+        text: 'Хорошо, спасибо. Да, конечно',
+        authorId: users[3].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
     ],
   },
   {
@@ -152,6 +173,34 @@ const chats = [
       {
         id: 'message_id_1',
         text: 'Привет',
+        authorId: users[5].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'message_id_2',
+        text: 'Привет',
+        authorId: users[0].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'message_id_3',
+        text: 'Как дела?',
+        authorId: users[5].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'message_id_4',
+        text: 'Хорошо, как твои?',
+        authorId: users[0].id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'message_id_5',
+        text: 'Отлично!',
         authorId: users[5].id,
         createdAt: Date.now(),
         updatedAt: Date.now(),
@@ -373,10 +422,28 @@ io.on('connection', (socket) => {
     const chat = chats[Math.floor((Math.random() * chats.length) % chats.length)];
     const user = users[Math.floor((Math.random() * users.length) % users.length)];
 
-    const newMessage = createNewChatMessage(chat.id, user.id, "Message hello how are you? I'm fine, thanks");
+    const randomMessage = [
+      'Привет!',
+      'Выглядит олично!',
+      'У меня всё замечательно, как твои дела?',
+      'Ты уже видел что произошло?',
+      'Завтра экзамен =(',
+      'Может поедем на велосипедах покатаемся?',
+      'Как насчет обеда в чин-чине?',
+      'Думаю сегодня отдохнуть',
+      'Ну и погода сегодня',
+      'Не хочу никуда идти',
+      'Сегодня буду учиться',
+    ];
+
+    const newMessage = createNewChatMessage(
+      chat.id,
+      user.id,
+      randomMessage[Math.floor((Math.random() * randomMessage.length) % randomMessage.length)]
+    );
 
     socket.emit('message', JSON.stringify({ ...newMessage, isAuthor: false }));
-  }, 10000);
+  }, 20000);
 
   // setInterval(() => {
   //   socket.emit(
